@@ -6,7 +6,7 @@ source("SEL.caution.parameter.R")
 shinyServer( 
     function(input, output){ 
         
-        textInputLFDRCaution <- reactive ({
+        textIOZeroOne <- reactive ({
             #Remove TRUE/FALSE prompt when there are empty fields
             checkNullFields <- (is.null(input$l1Input)
                                 ||is.null(input$l2Input))
@@ -16,24 +16,30 @@ shinyServer(
             }
             
             x1 <- c(as.numeric(unlist(
-                      strsplit(input$x1Input, 
-                               split = ",", fixed = TRUE))))
+                strsplit(input$x1Input, 
+                         split = ",", fixed = TRUE))))
             x2 <- c(as.numeric(unlist(
-                     strsplit(input$x2Input, 
-                              split = ",", fixed = TRUE))))
-            
+                strsplit(input$x2Input, 
+                         split = ",", fixed = TRUE))))
             
             l1 <- as.numeric(input$l1Input) 
             l2 <- as.numeric(input$l2Input)
             
             caution.parameter.actions(x1,x2,l1,l2) 
-            #SEL.caution.parameter(x1,x2)
-            
-            
         })
         
+        textIOSEL <- reactive ({
+            x1 <- c(as.numeric(unlist(
+                strsplit(input$x1Input, 
+                         split = ",", fixed = TRUE))))
+            x2 <- c(as.numeric(unlist(
+                strsplit(input$x2Input, 
+                         split = ",", fixed = TRUE))))
+            
+            SEL.caution.parameter(x1,x2) 
+        })
         
-        fileInputLFDRCaution <- reactive ({
+        fileIOZeroOne <- reactive ({
             inputFile <- input$LFDREstimatesFile
             
             # Remove TRUE/FALSE prompt when there are empty fields
@@ -47,48 +53,70 @@ shinyServer(
             
             x1 <- read.csv(inputFile$datapath, 
                            header = input$chooseFileHeader)[[1]] 
-            
             x2 <- read.csv(inputFile$datapath, 
                            header = input$chooseFileHeader)[[2]] 
-            
             l1 <- as.numeric(input$l1Input) 
             l2 <- as.numeric(input$l2Input)
             
             caution.parameter.actions(x1,x2,l1,l2) 
-            #SEL.caution.parameter(x1,x2)
+        })  
+        
+        fileIOSEL <- reactive ({
+            inputFile <- input$LFDREstimatesFile
+            
+            # Remove TRUE/FALSE prompt when there are empty fields
+            checkNullFields <- (is.null(inputFile))
+            
+            if(checkNullFields){ 
+                return()
+            }
+            
+            x1 <- read.csv(inputFile$datapath, 
+                           header = input$chooseFileHeader)[[1]] 
+            x2 <- read.csv(inputFile$datapath, 
+                           header = input$chooseFileHeader)[[2]] 
+
+            SEL.caution.parameter(x1,x2) 
         })  
       
             
       output$ZeroOneOutput <- renderPrint({ 
-           
            if(input$choiceLFDRInput == "fileIn"){ 
-               fileInputLFDRCaution()
+               fileIOZeroOne()
            }else if(input$choiceLFDRInput == "textIn"){
-               textInputLFDRCaution()
+               textIOZeroOne() 
            }
-
-       }) 
+       })  
+      
+      output$SELOutput <- renderPrint({ 
+          if(input$choiceLFDRInput == "fileIn"){ 
+              fileIOSEL()
+          }else if(input$choiceLFDRInput == "textIn"){
+              textIOSEL() 
+          }
+      })
       
       output$CSVOut <- downloadHandler( 
-          
           filename = function(){ 
               paste("LFDRResults_",Sys.time(),".csv", sep = "")
           }, 
           
           content = function(file){ 
-              
               if(input$choiceLFDRInput == "fileIn"){ 
-                  dFrame <- as.data.frame.list(fileInputLFDRCaution(), 
+                  fileIOAppend <- append(fileIOZeroOne(),fileIOSEL())
+                  dFrame <- as.data.frame.list(fileIOAppend, 
                                                optional = FALSE) 
               }else if(input$choiceLFDRInput == "textIn"){
-                  dFrame <- as.data.frame.list(textInputLFDRCaution(), 
+                  textIOAppend <- append(textIOZeroOne(),textIOSEL())
+                  dFrame <- as.data.frame.list(textIOAppend, 
                                                optional = FALSE) 
               }
               
               write.csv(dFrame, file, 
-                          quote = FALSE, 
-                          col.names = c("CGM1", "CGM0","CGM0.5"))
+                          quote = FALSE)
           }
       )
     }
-)
+) 
+
+
