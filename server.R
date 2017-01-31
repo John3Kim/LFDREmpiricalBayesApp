@@ -1,7 +1,8 @@
 library(shiny) 
 library(matrixStats)
 source("caution.parameter.actions.R")
-source("SEL.caution.parameter.R")
+source("SEL.caution.parameter.R") 
+source("caution.threshold.R")
 
 shinyServer( 
     function(input, output){ 
@@ -67,9 +68,7 @@ shinyServer(
             # Remove TRUE/FALSE prompt when there are empty fields
             checkNullFields <- (is.null(inputFile))
             
-            if(checkNullFields){ 
-                return()
-            }
+            if(checkNullFields){ return() }
             
             x1 <- read.csv(inputFile$datapath, 
                            header = input$chooseFileHeader)[[1]] 
@@ -77,10 +76,20 @@ shinyServer(
                            header = input$chooseFileHeader)[[2]] 
 
             SEL.caution.parameter(x1,x2) 
-        })  
+        }) 
+        
+      threshold <- reactive({ 
+          l1 <- as.numeric(input$l1Input) 
+          l2 <- as.numeric(input$l2Input)
+          
+          caution.threshold(l1,l2)
+          })
       
-            
-      output$ZeroOneOutput <- renderPrint({ 
+      output$cautionThreshold <- renderPrint({
+          threshold()
+      })
+              
+      output$ZeroOneOutput <- renderTable({ 
            if(input$choiceLFDRInput == "fileIn"){ 
                fileIOZeroOne()
            }else if(input$choiceLFDRInput == "textIn"){
@@ -88,7 +97,7 @@ shinyServer(
            }
        })  
       
-      output$SELOutput <- renderPrint({ 
+      output$SELOutput <- renderTable({ 
           if(input$choiceLFDRInput == "fileIn"){ 
               fileIOSEL()
           }else if(input$choiceLFDRInput == "textIn"){

@@ -9,7 +9,7 @@ shinyUI(fluidPage(theme = "main.css",
          users to test out the functions caution.parameter.actions 
          and SEL.caution.parameter given two sets of LFDR estimates.  
          This RShiny app is based on the package LFDREmpiricalBayes 
-         and will be available soon."), 
+         and will be available soon.  *A better description coming soon!*"), 
       p("Follow the steps labelled on the tabs.")
        ),
    
@@ -17,7 +17,8 @@ shinyUI(fluidPage(theme = "main.css",
         
    tabsetPanel( 
       tabPanel("1. Set Parameters",
-      # Row by row is easiest to loook at
+      
+      # Row by row is easiest to look at
       wellPanel(
          fluidRow( 
             column(3,
@@ -41,7 +42,7 @@ shinyUI(fluidPage(theme = "main.css",
                    ),
             
             column(5,
-                   strong("Input by using the text boxes below:"),
+                   strong("Input LFDR estimates by text input:"),
                    helpText("Separate LFDR estimates by a comma 
                              and zero or more spaces."),
                                     
@@ -79,19 +80,41 @@ shinyUI(fluidPage(theme = "main.css",
                   ))),
             
       tabPanel("2. See Results",
-         strong("Based on your LFDR estimates and loss values, 
-                 your Zero-One output is:"),
-         verbatimTextOutput("ZeroOneOutput"), 
-                    
          br(),
-         strong("Based on your LFDR estimates, your SEL output is:"),
-         verbatimTextOutput("SELOutput"),
-                         
+         column(3,
          downloadButton(outputId = "CSVOut", 
                         label = "Download Results (.csv)")
+               ),
+         column(3,
+            strong("Given a threshold of:"),
+            verbatimTextOutput("cautionThreshold")
+         ),
+         br(), 
+         br(), 
+         
+         # Considering an ordinary printout and a table 
+         # it would be easier if the user views the SEL and Zero-One 
+         # outputs as tables rather than that of a 
+         column(7,
+            strong("Based on your LFDR estimates and loss values, 
+                 your Zero-One output is:"),
+            #verbatimTextOutput("ZeroOneOutput"), 
+         
+            wellPanel(
+               tableOutput("ZeroOneOutput") 
+                     )
+         ),
+      
+         column(5,
+            strong("Based on your LFDR estimates, your SEL output is:"),
+            #verbatimTextOutput("SELOutput"),
+            wellPanel(
+               tableOutput("SELOutput")
+                     ) 
+               ) 
                ), 
                 
-      tabPanel("About", 
+      tabPanel("Credits", 
          wellPanel(
             h4("Credits"),
             p("This code is based on the caution.parameter.actions 
