@@ -89,7 +89,7 @@ shinyServer(
           threshold()
       })
               
-      output$ZeroOneOutput <- renderTable({ 
+      output$ZeroOneOutput <- renderTable(digits = 0, { 
            if(input$choiceLFDRInput == "fileIn"){ 
                fileIOZeroOne()
            }else if(input$choiceLFDRInput == "textIn"){
@@ -97,7 +97,7 @@ shinyServer(
            }
        })  
       
-      output$SELOutput <- renderTable({ 
+      output$SELOutput <- renderTable(digits = 5, { 
           if(input$choiceLFDRInput == "fileIn"){ 
               fileIOSEL()
           }else if(input$choiceLFDRInput == "textIn"){

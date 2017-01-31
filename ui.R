@@ -61,7 +61,7 @@ shinyUI(fluidPage(theme = "main.css",
             column(3,
                h4("2. Input loss values"),
                helpText("Input values based on the cost/benefit ratio 
-                        (l1 / (l1+l2)) of a true or false discovery. (Used only
+                        [threshold =  (l1 / (l1+l2))] of a true or false discovery. (Used only
                         in the Zero-One Loss output.)") 
                   ),
             
@@ -69,32 +69,30 @@ shinyUI(fluidPage(theme = "main.css",
                textInput(inputId = "l1Input",
                          label = "Loss due to type-I error (l1):", 
                          value = "4", 
-                         placeholder = "Input numerical loss value")),
-                             
-            column(4,
+                         placeholder = "Input numerical loss value"),
+               
                textInput(inputId = "l2Input",
                          label = "Loss due to type-II error (l2):", 
                          placeholder = "Input numerical loss value",
                          value = "1")
-                             ) 
+               ),
+                             
+            column(5,
+               strong("Given a threshold of:"),
+               verbatimTextOutput("cautionThreshold")
+                  )
                   ))),
             
       tabPanel("2. See Results",
          br(),
-         column(3,
-         downloadButton(outputId = "CSVOut", 
-                        label = "Download Results (.csv)")
-               ),
-         column(3,
-            strong("Given a threshold of:"),
-            verbatimTextOutput("cautionThreshold")
-         ),
-         br(), 
-         br(), 
-         
+         #column(3,
+         #   strong("Given a threshold of:"),
+         #   verbatimTextOutput("cautionThreshold")
+         #),
          # Considering an ordinary printout and a table 
          # it would be easier if the user views the SEL and Zero-One 
          # outputs as tables rather than that of a 
+         fluidRow(
          column(7,
             strong("Based on your LFDR estimates and loss values, 
                  your Zero-One output is:"),
@@ -112,8 +110,16 @@ shinyUI(fluidPage(theme = "main.css",
                tableOutput("SELOutput")
                      ) 
                ) 
-               ), 
-                
+               )), 
+      
+      tabPanel("3. Download", 
+        br(), 
+        strong("Download your results here:"), 
+        br(), 
+        downloadButton(outputId = "CSVOut", 
+               label = "Download Results (.csv)")
+               ),
+      
       tabPanel("Credits", 
          wellPanel(
             h4("Credits"),
