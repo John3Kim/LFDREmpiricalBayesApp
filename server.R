@@ -16,12 +16,12 @@ shinyServer(
                 return()
             }
             
-            x1 <- c(as.numeric(unlist(
-                strsplit(input$x1Input, 
-                         split = ",", fixed = TRUE))))
-            x2 <- c(as.numeric(unlist(
-                strsplit(input$x2Input, 
-                         split = ",", fixed = TRUE))))
+            x1 <- as.numeric(unlist(
+                             strsplit(input$x1Input, 
+                                      split = ",", fixed = TRUE)))
+            x2 <- as.numeric(unlist(
+                             strsplit(input$x2Input, 
+                                      split = ",", fixed = TRUE)))
             
             l1 <- as.numeric(input$l1Input) 
             l2 <- as.numeric(input$l2Input)
@@ -112,11 +112,11 @@ shinyServer(
           
           content = function(file){ 
               if(input$choiceLFDRInput == "fileIn"){ 
-                  fileIOAppend <- append(fileIOZeroOne(),fileIOSEL())
+                  fileIOAppend <- append(fileIOZeroOne(), fileIOSEL())
                   dFrame <- as.data.frame.list(fileIOAppend, 
                                                optional = FALSE) 
               }else if(input$choiceLFDRInput == "textIn"){
-                  textIOAppend <- append(textIOZeroOne(),textIOSEL())
+                  textIOAppend <- append(textIOZeroOne(), textIOSEL())
                   dFrame <- as.data.frame.list(textIOAppend, 
                                                optional = FALSE) 
               }

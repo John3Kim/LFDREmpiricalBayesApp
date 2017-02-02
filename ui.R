@@ -2,22 +2,31 @@ library(shiny)
 
 shinyUI(fluidPage(theme = "main.css",
    titlePanel("LFDREmpiricalBayes Data Analysis Demo"),
-    
+   hr(),
+   
    wellPanel(
-      h4("About"), 
-      p("The LFDREmpiricalBayes Data Analysis Demo allows the 
-         users to test out the functions caution.parameter.actions 
-         and SEL.caution.parameter given two sets of LFDR estimates.  
-         This RShiny app is based on the package LFDREmpiricalBayes 
-         and will be available soon.  *A better description coming soon!*"), 
-      p("Follow the steps labelled on the tabs.")
-       ),
+      
+      tags$div(class = "about",
+         tags$h4("About"), 
+         HTML(paste("The LFDREmpiricalBayes Data Analysis Demo allows the 
+                 users to test out the functions", tags$strong(class = "code",
+                 "caution.parameter.actions"),"and",
+                 tags$strong(class = "code","SEL.caution.parameter"), 
+                 "given two sets of LFDR estimates.  This RShiny app is based 
+                 on the package LFDREmpiricalBayes and will be available soon
+                 to install on R.  
+                 *More details coming soon!*", sep = " "))
+              ), 
+      br(),
+      p("To use this function, follow steps 1 to 3 as labelled on 
+                the tabs.")
+            ),
    
       hr(),
         
    tabsetPanel( 
       tabPanel("1. Set Parameters",
-      
+      br(),
       # Row by row is easiest to look at
       wellPanel(
          fluidRow( 
@@ -47,12 +56,12 @@ shinyUI(fluidPage(theme = "main.css",
                              and zero or more spaces."),
                                     
                    textInput(inputId = "x1Input",
-                             label = "Values of the first separate class (x1)", 
+                             label = "Values of the first reference class (x1)", 
                              placeholder = "Input LFDR values", 
                              value = "0.14, 0.80, 0.16, 0.94"),
                    
                    textInput(inputId = "x2Input",
-                             label = "Values of the second separate class (x2)", 
+                             label = "Values of the second reference class (x2)", 
                              placeholder = "Input LFDR values", 
                              value = "0.21, 0.61, 0.12, 0.82")
                                     ))),
@@ -78,7 +87,9 @@ shinyUI(fluidPage(theme = "main.css",
                ),
                              
             column(5,
-               strong("Given a threshold of:"),
+               strong("Threshold:"), 
+               helpText("This is the threshold of the LFDR (p-value) used 
+                        to reject or fail to reject the null hypothesis."),
                verbatimTextOutput("cautionThreshold")
                   )
                   ))),
@@ -121,11 +132,14 @@ shinyUI(fluidPage(theme = "main.css",
                ),
       
       tabPanel("Credits", 
+         br(),
          wellPanel(
             h4("Credits"),
-            p("This code is based on the caution.parameter.actions 
+            p("This backend code is based on 
+               caution.parameter.actions and SEL.caution.parameter 
                R function made by Ali Karimnezhad."), 
-            p("The RShiny app brought to you by Johnary Kim.")  
+            p("The RShiny app and code modifications to Ali's R code
+               is brought to you by Johnary Kim.")  
                   )
               )
 )))
