@@ -2,27 +2,26 @@ library(shiny)
 
 shinyUI(fluidPage(theme = "main.css",
    titlePanel("LFDREmpiricalBayes Data Analysis Demo"),
-   hr(),
-   
+
    wellPanel(
-      
-      tags$div(class = "about",
-         tags$h4("About"), 
-         HTML(paste("The LFDREmpiricalBayes Data Analysis Demo allows the 
-                 users to test out the functions", tags$strong(class = "code",
+      tags$div(class = "description",
+         HTML(paste(tags$strong("Note: "), "The functions associated with this 
+                 app is based on LFDREmpricalBayes and will be 
+                 available soon to install on R.",br(),br(),
+
+                 "The LFDREmpiricalBayes Data Analysis Demo allows 
+                 users to test out the functions", tags$span(class = "code",
                  "caution.parameter.actions"),"and",
-                 tags$strong(class = "code","SEL.caution.parameter"), 
-                 "given two sets of LFDR estimates.  This RShiny app is based 
-                 on the package LFDREmpiricalBayes and will be available soon
-                 to install on R.  
-                 *More details coming soon!*", sep = " "))
+                 tags$span(class = "code","SEL.caution.parameter"), 
+                 "given two sets of LFDR estimates provided below.", sep = " "))
               ), 
-      br(),
-      p("To use this function, follow steps 1 to 3 as labelled on 
-                the tabs.")
+         br(),
+         p("To use this app, follow steps 1 to 3 as labelled on 
+                the tabs."), 
+         tags$p("In order to use the file import option, ensure that 
+                you have a .csv file in the following order: gene name,
+                reference class one and reference class two.")
             ),
-   
-      hr(),
         
    tabsetPanel( 
       tabPanel("1. Set Parameters",
@@ -31,12 +30,14 @@ shinyUI(fluidPage(theme = "main.css",
       wellPanel(
          fluidRow( 
             column(3,
-                   h4("1. Input LFDR estimates"),
+                   h4("1. Input LFDR estimates"), 
+                   h5("Choose method of input: "),
+                   helpText("Choose the method of input below and fill out 
+                            their corresponding fields on the right."),
                    radioButtons(inputId = "choiceLFDRInput",
-                                label = "Choose method of input:", 
+                                label = NULL, 
                                 choices = c("File Import" = "fileIn", 
                                             "Text Input" = "textIn"))
-                                    
                   ), 
              
             column(4, 
@@ -46,22 +47,23 @@ shinyUI(fluidPage(theme = "main.css",
                              accept = c(".csv")),
                                     
                    checkboxInput(inputId = "chooseFileHeader", 
-                                 label = "Contains header? (Check if true.)", 
+                                 label = ".csv file contains header? 
+                                 (Check if true.)", 
                                  value = FALSE)
                    ),
             
             column(5,
                    strong("Input LFDR estimates by text input:"),
-                   helpText("Separate LFDR estimates by a comma 
-                             and zero or more spaces."),
+                   helpText("Separate LFDR estimates by a comma. (Can optionally 
+                            be separated by a space in addition to a comma.)"),
                                     
                    textInput(inputId = "x1Input",
-                             label = "Values of the first reference class (x1)", 
+                             label = "Values of the first reference class", 
                              placeholder = "Input LFDR values", 
                              value = "0.14, 0.80, 0.16, 0.94"),
                    
                    textInput(inputId = "x2Input",
-                             label = "Values of the second reference class (x2)", 
+                             label = "Values of the second reference class", 
                              placeholder = "Input LFDR values", 
                              value = "0.21, 0.61, 0.12, 0.82")
                                     ))),
@@ -69,45 +71,69 @@ shinyUI(fluidPage(theme = "main.css",
          fluidRow(
             column(3,
                h4("2. Input loss values"),
-               helpText("Input values based on the cost/benefit ratio 
-                        [threshold =  (l1 / (l1+l2))] of a true or false discovery. (Used only
-                        in the Zero-One Loss output.)") 
+               helpText(HTML(paste("(Used only in the Zero-One Loss 
+                                   output.)", br(), br(),
+                                   "Input values based on the cost/benefit 
+                                   ratio, or the threshold of a true or false 
+                                   discovery.", sep=""))) 
                   ),
             
             column(4,
+               tags$p(tags$strong("Equation for threshold:"),br(),
+                      "Threshold =  (l",tags$sub("I"), 
+                      " / (l",tags$sub("I")," + l",tags$sub("II"), 
+                      "))"),
                textInput(inputId = "l1Input",
-                         label = "Loss due to type-I error (l1):", 
+                         label = HTML(paste("Loss due to type-I error (l"
+                                            ,tags$sub("I"),"):", 
+                                            sep = "")), 
                          value = "4", 
                          placeholder = "Input numerical loss value"),
                
                textInput(inputId = "l2Input",
-                         label = "Loss due to type-II error (l2):", 
+                         label = HTML(paste("Loss due to type-II error (l"
+                                            ,tags$sub("II"),"):",sep = "")), 
                          placeholder = "Input numerical loss value",
                          value = "1")
                ),
                              
             column(5,
                strong("Threshold:"), 
-               helpText("This is the threshold of the LFDR (p-value) used 
-                        to reject or fail to reject the null hypothesis."),
+               helpText("This is the threshold used 
+                        to reject or fail to reject the null hypothesis based on 
+                        the given LFDR estimates."),
                verbatimTextOutput("cautionThreshold")
                   )
                   ))),
             
       tabPanel("2. See Results",
          br(),
-         #column(3,
-         #   strong("Given a threshold of:"),
-         #   verbatimTextOutput("cautionThreshold")
-         #),
-         # Considering an ordinary printout and a table 
-         # it would be easier if the user views the SEL and Zero-One 
-         # outputs as tables rather than that of a 
+         
+         wellPanel( 
+             tags$h4("Definitions"),
+             HTML(paste(strong("Outputs:"), br(), 
+                        tags$ul( 
+                            tags$li("CGM1- Conditional Gamma Minimax"), 
+                            tags$li("CGM0- Conditional Gamma Minimin"), 
+                            tags$li("CGM0.5- Caution/Action Parameter 
+                                    (Balance between CGM0 and CGM1).")
+                            )
+                        )),
+             HTML(paste(strong("Zero-One: " ),"Fail to reject or reject 
+                        a null hypothesis. 0 denotes fail to reject; 
+                        1 denotes reject.",sep = "")),
+             br(),
+             HTML(paste(strong("SEL: " ),"The squared error loss function.  It 
+                       denotes the odds ratio and quantifies the assocation of 
+                       a gene to a particular disease.",sep = ""))
+             
+            ),
+         
          fluidRow(
          column(7,
             strong("Based on your LFDR estimates and loss values, 
                  your Zero-One output is:"),
-            #verbatimTextOutput("ZeroOneOutput"), 
+        
          
             wellPanel(
                tableOutput("ZeroOneOutput") 
@@ -116,7 +142,7 @@ shinyUI(fluidPage(theme = "main.css",
       
          column(5,
             strong("Based on your LFDR estimates, your SEL output is:"),
-            #verbatimTextOutput("SELOutput"),
+
             wellPanel(
                tableOutput("SELOutput")
                      ) 
@@ -125,22 +151,58 @@ shinyUI(fluidPage(theme = "main.css",
       
       tabPanel("3. Download", 
         br(), 
+        wellPanel(
+            HTML(paste(tags$strong("Note: ")," Some users have experienced 
+                       some issues with downloading the file with the 
+                       correct extension.  If you are experiencing this 
+                       problem, please ensure that you type in .csv after 
+                       the output file name.", sep = ""))
+        ),
         strong("Download your results here:"), 
         br(), 
         downloadButton(outputId = "CSVOut", 
                label = "Download Results (.csv)")
                ),
       
-      tabPanel("Credits", 
+      tabPanel("About", 
          br(),
          wellPanel(
             h4("Credits"),
-            p("This backend code is based on 
-               caution.parameter.actions and SEL.caution.parameter 
-               R function made by Ali Karimnezhad."), 
+            HTML(paste("The R functions ",
+               tags$span(class = "code", "caution.parameter.actions"), 
+               " and ", tags$span(class = "code", "SEL.caution.parameter"), 
+               " were originally created by Ali Karimnezhad.", sep = "")), 
             p("The RShiny app and code modifications to Ali's R code
-               is brought to you by Johnary Kim.")  
+               is brought to you by Johnary Kim.") 
+                  ), 
+         wellPanel( 
+             h4("Contact"), 
+             HTML(paste("For any issues regarding the RShiny app and its 
+                        underlying scripts, please contact the authors below.", 
+                        br(),
+                        br(), tags$strong("Ali Karimnezhad:  "),
+                        tags$a(href = "ali_karimnezhad@yahoo.com", 
+                               "ali_karimnezhad@yahoo.com"),
+                        br(), tags$strong("Johnary Kim:  "),  
+                        tags$a(href = "jkim226@uottawa.ca",
+                               "jkim226@uottawa.ca"),
+                        sep = "") 
+                  
                   )
-              )
+             ),
+         wellPanel( 
+             h4("References"), 
+             HTML(paste("Karimnezhad, A. and Bickel, D. R. (2016). Incorporating 
+                        prior knowledge about genetic variants into the analysis 
+                        of genetic association data: An empirical Bayes approach. 
+                        Working paper. Retrieved from ",
+                        tags$a(href = "http://hdl.handle.net/10393/34889", 
+                               "http://hdl.handle.net/10393/34889"),".", 
+                        sep = ""))
+             
+              ) 
+         
+         ) 
+       
 )))
 

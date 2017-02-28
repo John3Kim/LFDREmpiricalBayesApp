@@ -22,11 +22,19 @@ shinyServer(
             x2 <- as.numeric(unlist(
                              strsplit(input$x2Input, 
                                       split = ",", fixed = TRUE)))
+            size <- length(x1) 
+            
+            Gene <- seq(from = 1, to = size)
             
             l1 <- as.numeric(input$l1Input) 
             l2 <- as.numeric(input$l2Input)
             
-            caution.parameter.actions(x1,x2,l1,l2) 
+            textResultsTodFrame <- as.data.frame(
+                caution.parameter.actions(x1,x2,l1,l2))
+            
+            resultsOut <- cbind(Gene, textResultsTodFrame) 
+            return(resultsOut)
+            
         })
         
         textIOSEL <- reactive ({
@@ -52,14 +60,21 @@ shinyServer(
                 return()
             }
             
+           Gene <- read.csv(inputFile$datapath, 
+                                 header = input$chooseFileHeader)[[1]] 
             x1 <- read.csv(inputFile$datapath, 
-                           header = input$chooseFileHeader)[[1]] 
-            x2 <- read.csv(inputFile$datapath, 
                            header = input$chooseFileHeader)[[2]] 
+            x2 <- read.csv(inputFile$datapath, 
+                           header = input$chooseFileHeader)[[3]] 
             l1 <- as.numeric(input$l1Input) 
             l2 <- as.numeric(input$l2Input)
             
-            caution.parameter.actions(x1,x2,l1,l2) 
+            fileResultsTodFrame <- as.data.frame(
+                caution.parameter.actions(x1,x2,l1,l2)) 
+            resultsOut <- cbind(fileResultsTodFrame) 
+            return(fileResultsTodFrame)
+            
+        
         })  
         
         fileIOSEL <- reactive ({
@@ -71,9 +86,9 @@ shinyServer(
             if(checkNullFields){ return() }
             
             x1 <- read.csv(inputFile$datapath, 
-                           header = input$chooseFileHeader)[[1]] 
-            x2 <- read.csv(inputFile$datapath, 
                            header = input$chooseFileHeader)[[2]] 
+            x2 <- read.csv(inputFile$datapath, 
+                           header = input$chooseFileHeader)[[3]] 
 
             SEL.caution.parameter(x1,x2) 
         }) 
@@ -84,9 +99,9 @@ shinyServer(
           
           caution.threshold(l1,l2)
           })
-      
+
       output$cautionThreshold <- renderPrint({
-          threshold()
+          cat(format(threshold()))
       })
               
       output$ZeroOneOutput <- renderTable(digits = 0, { 
@@ -97,7 +112,7 @@ shinyServer(
            }
        })  
       
-      output$SELOutput <- renderTable(digits = 5, { 
+      output$SELOutput <- renderTable(digits = 3, { 
           if(input$choiceLFDRInput == "fileIn"){ 
               fileIOSEL()
           }else if(input$choiceLFDRInput == "textIn"){
@@ -107,23 +122,24 @@ shinyServer(
       
       output$CSVOut <- downloadHandler( 
           filename = function(){ 
-              paste("LFDRResults_",Sys.time(),".csv", sep = "")
+              paste("LFDRResults",Sys.time(),".csv", sep = "")
           }, 
           
           content = function(file){ 
               if(input$choiceLFDRInput == "fileIn"){ 
                   fileIOAppend <- append(fileIOZeroOne(), fileIOSEL())
                   dFrame <- as.data.frame.list(fileIOAppend, 
-                                               optional = FALSE) 
+                                               optional = FALSE)
               }else if(input$choiceLFDRInput == "textIn"){
                   textIOAppend <- append(textIOZeroOne(), textIOSEL())
                   dFrame <- as.data.frame.list(textIOAppend, 
-                                               optional = FALSE) 
+                                               optional = FALSE)
               }
               
               write.csv(dFrame, file, 
                           quote = FALSE)
-          }
+          }, 
+          contentType = NULL
       )
     }
 ) 
