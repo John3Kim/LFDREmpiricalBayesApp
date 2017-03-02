@@ -1,0 +1,18 @@
+body{
+   background-color: rgb(240, 248, 255); 
+}
+
+hr{ 
+  border-color: black;
+} 
+
+.code{ 
+    font-family: Monaco;
+}
+
+#zero-one-def, #sel-def{ 
+    border-bottom: 1px dotted #999;
+    cursor: help;
+    display: inline;
+}
+

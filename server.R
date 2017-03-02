@@ -5,7 +5,7 @@ source("SEL.caution.parameter.R")
 source("caution.threshold.R")
 
 shinyServer( 
-    function(input, output){ 
+    function(input, output, session){ 
         
         textIOZeroOne <- reactive ({
             #Remove TRUE/FALSE prompt when there are empty fields
@@ -14,7 +14,8 @@ shinyServer(
             
             if(checkNullFields){ 
                 return()
-            }
+            } 
+            
             
             x1 <- as.numeric(unlist(
                              strsplit(input$x1Input, 
@@ -73,7 +74,6 @@ shinyServer(
                 caution.parameter.actions(x1,x2,l1,l2)) 
             resultsOut <- cbind(fileResultsTodFrame) 
             return(fileResultsTodFrame)
-            
         
         })  
         
@@ -118,7 +118,33 @@ shinyServer(
           }else if(input$choiceLFDRInput == "textIn"){
               textIOSEL() 
           }
-      })
+      }) 
+      addPopover(session,
+                 id = "ZeroOneOutput",
+                 title = "Zero-One Output",
+                 content = paste(strong("Outputs:"), br(), 
+                                 tags$ul( 
+                                     tags$li("CGM1- Conditional Gamma Minimax"), 
+                                     tags$li("CGM0- Conditional Gamma Minimin"), 
+                                     tags$li("CGM0.5- Caution/Action Parameter 
+                                             (Balance between CGM0 and CGM1).")
+                                     )), 
+                 placement = "top", 
+                 trigger = "click") 
+      
+      addPopover(session,
+                 id = "SELOutput",
+                 title = "SEL Output",
+                 content = paste(strong("Outputs:"), br(), 
+                                 tags$ul( 
+                                     tags$li("CGM1- Conditional Gamma Minimax"), 
+                                     tags$li("CGM0- Conditional Gamma Minimin"), 
+                                     tags$li("CGM0.5- Caution/Action Parameter 
+                                             (Balance between CGM0 and CGM1).")
+                                     )), 
+                 placement = "top", 
+                 trigger = "click") 
+      
       
       output$CSVOut <- downloadHandler( 
           filename = function(){ 

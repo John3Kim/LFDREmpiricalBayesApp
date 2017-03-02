@@ -1,4 +1,6 @@
 library(shiny)
+library(shinyBS)
+
 
 shinyUI(fluidPage(theme = "main.css",
    titlePanel("LFDREmpiricalBayes Data Analysis Demo"),
@@ -16,11 +18,11 @@ shinyUI(fluidPage(theme = "main.css",
                  "given two sets of LFDR estimates provided below.", sep = " "))
               ), 
          br(),
-         p("To use this app, follow steps 1 to 3 as labelled on 
-                the tabs."), 
          tags$p("In order to use the file import option, ensure that 
                 you have a .csv file in the following order: gene name,
-                reference class one and reference class two.")
+                reference class one and reference class two."), 
+         p("To use this app, follow steps 1 to 3 as labelled on 
+                the tabs.")
             ),
         
    tabsetPanel( 
@@ -37,7 +39,8 @@ shinyUI(fluidPage(theme = "main.css",
                    radioButtons(inputId = "choiceLFDRInput",
                                 label = NULL, 
                                 choices = c("File Import" = "fileIn", 
-                                            "Text Input" = "textIn"))
+                                            "Text Input" = "textIn")), 
+                   conditionalPanel(condition = "input.fileIn == true")  
                   ), 
              
             column(4, 
@@ -66,7 +69,8 @@ shinyUI(fluidPage(theme = "main.css",
                              label = "Values of the second reference class", 
                              placeholder = "Input LFDR values", 
                              value = "0.21, 0.61, 0.12, 0.82")
-                                    ))),
+                   
+                   ))),
       wellPanel(
          fluidRow(
             column(3,
@@ -110,44 +114,49 @@ shinyUI(fluidPage(theme = "main.css",
          br(),
          
          wellPanel( 
-             tags$h4("Definitions"),
-             HTML(paste(strong("Outputs:"), br(), 
-                        tags$ul( 
-                            tags$li("CGM1- Conditional Gamma Minimax"), 
-                            tags$li("CGM0- Conditional Gamma Minimin"), 
-                            tags$li("CGM0.5- Caution/Action Parameter 
-                                    (Balance between CGM0 and CGM1).")
-                            )
-                        )),
-             HTML(paste(strong("Zero-One: " ),"Fail to reject or reject 
-                        a null hypothesis. 0 denotes fail to reject; 
-                        1 denotes reject.",sep = "")),
-             br(),
-             HTML(paste(strong("SEL: " ),"The squared error loss function.  It 
-                       denotes the odds ratio and quantifies the assocation of 
-                       a gene to a particular disease.",sep = ""))
+             HTML(paste("To know what", strong("CGM0, CGM1,"),"and", 
+                        strong("CGM0.5"), 
+                        "represent, click on the result boxes below after", 
+                        "inputting LFDR", 
+                        "estimates and loss values.", sep = " "))
              
             ),
          
          fluidRow(
          column(7,
-            strong("Based on your LFDR estimates and loss values, 
-                 your Zero-One output is:"),
-        
-         
+            HTML(paste(strong("Based on your LFDR estimates and loss values, 
+                 your "), tags$span(id = "zero-one-def", "Zero-One output"), 
+                       strong(" is:"), sep = "")), 
+            bsPopover(id = "zero-one-def",
+                      title = "Zero-One output",
+                      content = paste("Fail to reject or reject a null hypothesis.",
+                                      "  0 denotes failure to reject; ",
+                                      " 1 denotes reject.", sep=""),
+                      placement = "top"),
+
             wellPanel(
                tableOutput("ZeroOneOutput") 
                      )
          ),
       
          column(5,
-            strong("Based on your LFDR estimates, your SEL output is:"),
+            HTML(paste(strong("Based on your LFDR estimates, your"), 
+                       tags$span(id = "sel-def", "SEL output"), 
+                       strong(" is:"),
+                       sep = " ")),
+            bsPopover(id = "sel-def",
+                      title = "SEL output",
+                      content = paste("The", 
+                                      strong("squared error loss"), "function.",
+                                      "It denotes the odds ratio and", 
+                                      "quantifies",
+                                      "the association of a gene to a ",
+                                      "partitcular disease", sep = " "),
+                      placement = "top"),
 
-            wellPanel(
-               tableOutput("SELOutput")
-                     ) 
-               ) 
-               )), 
+            wellPanel(tableOutput("SELOutput")) 
+            
+               ))), 
       
       tabPanel("3. Download", 
         br(), 
@@ -181,14 +190,12 @@ shinyUI(fluidPage(theme = "main.css",
                         underlying scripts, please contact the authors below.", 
                         br(),
                         br(), tags$strong("Ali Karimnezhad:  "),
-                        tags$a(href = "ali_karimnezhad@yahoo.com", 
+                        tags$a(href = "mailTo:ali_karimnezhad@yahoo.com", 
                                "ali_karimnezhad@yahoo.com"),
                         br(), tags$strong("Johnary Kim:  "),  
-                        tags$a(href = "jkim226@uottawa.ca",
+                        tags$a(href = "mailTo:jkim226@uottawa.ca",
                                "jkim226@uottawa.ca"),
-                        sep = "") 
-                  
-                  )
+                        sep = ""))
              ),
          wellPanel( 
              h4("References"), 
