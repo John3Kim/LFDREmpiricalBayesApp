@@ -39,38 +39,14 @@ shinyUI(fluidPage(theme = "main.css",
                    radioButtons(inputId = "choiceLFDRInput",
                                 label = NULL, 
                                 choices = c("File Import" = "fileIn", 
-                                            "Text Input" = "textIn")), 
-                   conditionalPanel(condition = "input.fileIn == true")  
+                                            "Text Input" = "textIn"))
                   ), 
              
-            column(4, 
-                   fileInput(inputId = "LFDREstimatesFile",
-                             label = "Import LFDR estimates as a CSV file:", 
-                             multiple = FALSE,
-                             accept = c(".csv")),
-                                    
-                   checkboxInput(inputId = "chooseFileHeader", 
-                                 label = ".csv file contains header? 
-                                 (Check if true.)", 
-                                 value = FALSE)
-                   ),
-            
-            column(5,
-                   strong("Input LFDR estimates by text input:"),
-                   helpText("Separate LFDR estimates by a comma. (Can optionally 
-                            be separated by a space in addition to a comma.)"),
-                                    
-                   textInput(inputId = "x1Input",
-                             label = "Values of the first reference class", 
-                             placeholder = "Input LFDR values", 
-                             value = "0.14, 0.80, 0.16, 0.94"),
-                   
-                   textInput(inputId = "x2Input",
-                             label = "Values of the second reference class", 
-                             placeholder = "Input LFDR values", 
-                             value = "0.21, 0.61, 0.12, 0.82")
-                   
-                   ))),
+            column(9, 
+                uiOutput("ui")
+                   )
+         )),
+      
       wellPanel(
          fluidRow(
             column(3,
@@ -84,7 +60,7 @@ shinyUI(fluidPage(theme = "main.css",
             
             column(4,
                tags$p(tags$strong("Equation for threshold:"),br(),
-                      "Threshold =  (l",tags$sub("I"), 
+                      "threshold =  (l",tags$sub("I"), 
                       " / (l",tags$sub("I")," + l",tags$sub("II"), 
                       "))"),
                textInput(inputId = "l1Input",
@@ -112,16 +88,6 @@ shinyUI(fluidPage(theme = "main.css",
             
       tabPanel("2. See Results",
          br(),
-         
-         wellPanel( 
-             HTML(paste("To know what", strong("CGM0, CGM1,"),"and", 
-                        strong("CGM0.5"), 
-                        "represent, click on the result boxes below after", 
-                        "inputting LFDR", 
-                        "estimates and loss values.", sep = " "))
-             
-            ),
-         
          fluidRow(
          column(7,
             HTML(paste(strong("Based on your LFDR estimates and loss values, 
@@ -135,7 +101,7 @@ shinyUI(fluidPage(theme = "main.css",
                       placement = "top"),
 
             wellPanel(
-               tableOutput("ZeroOneOutput") 
+               tags$span(class = "help-output", tableOutput("ZeroOneOutput")) 
                      )
          ),
       
@@ -154,8 +120,8 @@ shinyUI(fluidPage(theme = "main.css",
                                       "partitcular disease", sep = " "),
                       placement = "top"),
 
-            wellPanel(tableOutput("SELOutput")) 
-            
+            wellPanel(
+                tags$div(class = "help-output", tableOutput("SELOutput"))) 
                ))), 
       
       tabPanel("3. Download", 
@@ -212,4 +178,3 @@ shinyUI(fluidPage(theme = "main.css",
          ) 
        
 )))
-

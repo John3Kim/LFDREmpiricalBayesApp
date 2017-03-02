@@ -1,11 +1,47 @@
 library(shiny) 
 library(matrixStats)
-source("caution.parameter.actions.R")
-source("SEL.caution.parameter.R") 
-source("caution.threshold.R")
+source("R/caution.parameter.actions.R")
+source("R/SEL.caution.parameter.R") 
+source("R/caution.threshold.R")
 
 shinyServer( 
     function(input, output, session){ 
+        
+        # Uses the render UI to change type of input to reflect the radio buttons
+        output$ui<- renderUI({
+            if (is.null(input$choiceLFDRInput)){
+                return()
+            } 
+            
+            switch(input$choiceLFDRInput,
+            
+               "fileIn" = list(fileInput(inputId = "LFDREstimatesFile",
+                                      label = "Import LFDR estimates as a CSV file:", 
+                                      multiple = FALSE,
+                                      accept = c(".csv")),
+ 
+                            checkboxInput(inputId = "chooseFileHeader", 
+                                          label = ".csv file contains header? 
+                                                   (Check if true.)", 
+                                          value = FALSE)), 
+                
+                "textIn" = list(strong("Input LFDR estimates by text input:"),
+                             helpText("Separate LFDR estimates by a comma. (Can optionally 
+                                       be separated by a space in addition to a comma.)"),
+                
+                             textInput(inputId = "x1Input",
+                                       label = "Values of the first reference class", 
+                                       placeholder = "Input LFDR values", 
+                                       value = "0.14, 0.80, 0.16, 0.94"),
+                
+                             textInput(inputId = "x2Input",
+                                       label = "Values of the second reference class", 
+                                       placeholder = "Input LFDR values", 
+                                       value = "0.21, 0.61, 0.12, 0.82"))
+            
+            )})
+        
+
         
         textIOZeroOne <- reactive ({
             #Remove TRUE/FALSE prompt when there are empty fields
@@ -130,7 +166,7 @@ shinyServer(
                                              (Balance between CGM0 and CGM1).")
                                      )), 
                  placement = "top", 
-                 trigger = "click") 
+                 trigger = "hover") 
       
       addPopover(session,
                  id = "SELOutput",
@@ -143,7 +179,7 @@ shinyServer(
                                              (Balance between CGM0 and CGM1).")
                                      )), 
                  placement = "top", 
-                 trigger = "click") 
+                 trigger = "hover") 
       
       
       output$CSVOut <- downloadHandler( 
@@ -169,5 +205,3 @@ shinyServer(
       )
     }
 ) 
-
-
