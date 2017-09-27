@@ -7,7 +7,9 @@ caution.parameter.actions <- function (x1, x2, l1 = 4, l2 = 1) {
    lossValZeroNeg <- (l1 <= 0) || (l2 <= 0)
    
    if(notEqualLen){
-      stop("Vectors must be of equal length.")
+       #Vectors must be of equal length
+      stop("Number of inputted values of the first reference class must equal
+           to that of the second one.")
    }
 
    if(lossValZeroNeg){
@@ -18,7 +20,7 @@ caution.parameter.actions <- function (x1, x2, l1 = 4, l2 = 1) {
       lfdrOutOfBounds <- (x1[i] < 0 || x1[i] > 1)||(x2[i] < 0 || x2[i] > 1)
       
       if(lfdrOutOfBounds){
-         stop("Each index in vector x1 or x2 must contain a value 
+         stop("Each LFDR value inputted in the reference classes must be a value 
               between 0 and 1.")
       }
    } 

@@ -1,7 +1,6 @@
 library(shiny)
 library(shinyBS)
 
-
 shinyUI(fluidPage(theme = "main.css",
    titlePanel("LFDREmpiricalBayes Data Analysis Demo"),
 
@@ -18,9 +17,6 @@ shinyUI(fluidPage(theme = "main.css",
                  "given two sets of LFDR estimates provided below.", sep = " "))
               ), 
          br(),
-         tags$p("In order to use the file import option, ensure that 
-                you have a .csv file in the following order: gene name,
-                reference class one and reference class two."), 
          p("To use this app, follow steps 1 to 3 as labelled on 
                 the tabs.")
             ),
@@ -32,7 +28,7 @@ shinyUI(fluidPage(theme = "main.css",
       wellPanel(
          fluidRow( 
             column(3,
-                   h4("1. Input LFDR estimates"), 
+                   h4("a. Input LFDR estimates"), 
                    h5("Choose method of input: "),
                    helpText("Choose the method of input below and fill out 
                             their corresponding fields on the right."),
@@ -50,7 +46,7 @@ shinyUI(fluidPage(theme = "main.css",
       wellPanel(
          fluidRow(
             column(3,
-               h4("2. Input loss values"),
+               h4("b. Input loss values"),
                helpText(HTML(paste("(Used only in the Zero-One Loss 
                                    output.)", br(), br(),
                                    "Input values based on the cost/benefit 
@@ -60,9 +56,10 @@ shinyUI(fluidPage(theme = "main.css",
             
             column(4,
                tags$p(tags$strong("Equation for threshold:"),br(),
-                      "threshold =  (l",tags$sub("I"), 
+                      tags$span(class = "math-font", 
+                                "threshold =  (l",tags$sub("I"), 
                       " / (l",tags$sub("I")," + l",tags$sub("II"), 
-                      "))"),
+                      "))")),
                textInput(inputId = "l1Input",
                          label = HTML(paste("Loss due to type-I error (l"
                                             ,tags$sub("I"),"):", 
@@ -88,7 +85,9 @@ shinyUI(fluidPage(theme = "main.css",
             
       tabPanel("2. See Results",
          br(),
-         fluidRow(
+         fluidRow( 
+         wellPanel("Hover your mouse over the results or 
+                   the underlined text to see definitions."),
          column(7,
             HTML(paste(strong("Based on your LFDR estimates and loss values, 
                  your "), tags$span(id = "zero-one-def", "Zero-One output"), 
@@ -148,7 +147,11 @@ shinyUI(fluidPage(theme = "main.css",
                " and ", tags$span(class = "code", "SEL.caution.parameter"), 
                " were originally created by Ali Karimnezhad.", sep = "")), 
             p("The RShiny app and code modifications to Ali's R code
-               is brought to you by Johnary Kim.") 
+               is brought to you by Johnary Kim."), 
+            HTML(paste("The work of the R package and documentation was done 
+                       under the supervision of Dr. David R. Bickel. Some of 
+                       his other work can be found ", 
+                 tags$a(href = "https://davidbickel.com","here"),".",sep = ""))
                   ), 
          wellPanel( 
              h4("Contact"), 

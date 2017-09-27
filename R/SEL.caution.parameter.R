@@ -3,7 +3,8 @@ SEL.caution.parameter <- function (x1, x2) {
   notEqualLen <- length(x1) != length(x2)
   
   if(notEqualLen){
-    stop("Vectors must be of equal length.")
+    stop("Number of inputted values of the first reference class must equal
+           to that of the second one.")
   }
 
   for(i in 1:length(x1)){
