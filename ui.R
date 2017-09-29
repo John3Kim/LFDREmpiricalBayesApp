@@ -6,10 +6,12 @@ shinyUI(fluidPage(theme = "main.css",
 
    wellPanel(
       tags$div(class = "description",
-         HTML(paste(tags$strong("Note: "), "The functions associated with this 
-                 app is based on LFDREmpricalBayes and will be 
-                 available soon to install on R.",br(),br(),
-
+         HTML(paste("The functions associated with this 
+                 app is based on the R package LFDREmpricalBayes and can 
+                 be installed by issuing the following command:", 
+                 tags$span(class = "code",
+                 "install.packages('LFDREmpiricalBayes')"),".",
+                 br(),br(),
                  "The LFDREmpiricalBayes Data Analysis Demo allows 
                  users to test out the functions", tags$span(class = "code",
                  "caution.parameter.actions"),"and",
@@ -146,13 +148,21 @@ shinyUI(fluidPage(theme = "main.css",
                tags$span(class = "code", "caution.parameter.actions"), 
                " and ", tags$span(class = "code", "SEL.caution.parameter"), 
                " were originally created by Ali Karimnezhad.", sep = "")), 
-            p("The RShiny app and code modifications to Ali's R code
-               is brought to you by Johnary Kim."), 
+            HTML(paste("The RShiny app and code modifications to Ali's R code
+               is brought to you by Johnary Kim.",br(),br(), "The source code can be located ",
+                 tags$a(href = "https://github.com/John3Kim/LFDREmpiricalBayesApp","here"),".",sep = "")), 
+            br(), br(),
             HTML(paste("The work of the R package and documentation was done 
                        under the supervision of Dr. David R. Bickel. Some of 
                        his other work can be found ", 
                  tags$a(href = "https://davidbickel.com","here"),".",sep = ""))
                   ), 
+         wellPanel(
+             h4("Legal"), 
+             HTML(paste("LFDREmpiricalBayes Data Analysis Demo is licensed under ", 
+                  tags$a(href ="https://www.gnu.org/licenses/gpl-3.0.en.html","GPL-3"),"."
+                  ,sep =""))
+                ),
          wellPanel( 
              h4("Contact"), 
              HTML(paste("For any issues regarding the RShiny app and its 
