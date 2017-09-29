@@ -15,8 +15,16 @@ shinyServer(
             
             switch(input$choiceLFDRInput,
             
-               "fileIn" = list(fileInput(inputId = "LFDREstimatesFile",
-                                      label = "Import LFDR estimates as a CSV file:", 
+               "fileIn" = list(tags$strong("Import LFDR estimates as a 
+                                      CSV file:"),
+                            helpText("In order to use the file import 
+                                      option, ensure that you have a .csv file 
+                                      in the following order: gene name, 
+                                      reference class one and reference class 
+                                      two."),
+                            
+                            fileInput(inputId = "LFDREstimatesFile",
+                                      label = "", 
                                       multiple = FALSE,
                                       accept = c(".csv")),
  
@@ -26,16 +34,19 @@ shinyServer(
                                           value = FALSE)), 
                 
                 "textIn" = list(strong("Input LFDR estimates by text input:"),
-                             helpText("Separate LFDR estimates by a comma. (Can optionally 
-                                       be separated by a space in addition to a comma.)"),
+                             helpText("Separate LFDR estimates by a comma. 
+                                       (Can optionally be separated by a space 
+                                        in addition to a comma.)"),
                 
                              textInput(inputId = "x1Input",
-                                       label = "Values of the first reference class", 
+                                       label = "Values of the first reference 
+                                       class", 
                                        placeholder = "Input LFDR values", 
                                        value = "0.14, 0.80, 0.16, 0.94"),
                 
                              textInput(inputId = "x2Input",
-                                       label = "Values of the second reference class", 
+                                       label = "Values of the second reference 
+                                       class", 
                                        placeholder = "Input LFDR values", 
                                        value = "0.21, 0.61, 0.12, 0.82"))
             
@@ -155,6 +166,7 @@ shinyServer(
               textIOSEL() 
           }
       }) 
+      
       addPopover(session,
                  id = "ZeroOneOutput",
                  title = "Zero-One Output",

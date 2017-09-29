@@ -22,6 +22,6 @@ hr{
 } 
 
 .math-font{ 
-    font-family: Computer Modern Roman;   
-}
+    font-family: Computer Modern Roman; 
+    font-style: italic;
 }
