@@ -3,15 +3,19 @@ library(matrixStats)
 source("R/caution.parameter.actions.R")
 source("R/SEL.caution.parameter.R") 
 source("R/caution.threshold.R")
+source("R/refresh_file_data.R")
 
 shinyServer( 
     function(input, output, session){ 
-        
+
         # Uses the render UI to change type of input to reflect the radio buttons
         output$ui<- renderUI({
             if (is.null(input$choiceLFDRInput)){
                 return()
             } 
+            
+            # Do a refresh every 2 minutes 
+            invalidateLater(120000,session)
             
             switch(input$choiceLFDRInput,
             
@@ -26,7 +30,7 @@ shinyServer(
                             fileInput(inputId = "LFDREstimatesFile",
                                       label = "", 
                                       multiple = FALSE,
-                                      accept = c(".csv")),
+                                      accept = c(".csv"),),
  
                             checkboxInput(inputId = "chooseFileHeader", 
                                           label = ".csv file contains header? 
@@ -42,19 +46,23 @@ shinyServer(
                                        label = "Values of the first reference 
                                        class", 
                                        placeholder = "Input LFDR values", 
-                                       value = "0.14, 0.80, 0.16, 0.94"),
+                                       #value = "0.14, 0.80, 0.16, 0.94"),
+                                       value = lfdr1),
                 
                              textInput(inputId = "x2Input",
                                        label = "Values of the second reference 
                                        class", 
-                                       placeholder = "Input LFDR values", 
-                                       value = "0.21, 0.61, 0.12, 0.82"))
+                                       placeholder = "Input LFDR values",
+                                       value = lfdr2)#,
+                                       #value = "0.21, 0.61, 0.12, 0.82")
+                             )
             
             )})
         
 
         
         textIOZeroOne <- reactive ({
+            
             #Remove TRUE/FALSE prompt when there are empty fields
             checkNullFields <- (is.null(input$l1Input)
                                 ||is.null(input$l2Input))
