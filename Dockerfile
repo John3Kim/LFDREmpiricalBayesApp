@@ -20,13 +20,11 @@ RUN apt-get update && apt-get install -y \
 ## update system libraries
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get clean
+    apt-get clean && \ 
+    sudo apt-get install -y cron && \
+    sudo cron start
 
 COPY LFDREmpiricalBayesApp.Rproj /srv/shiny-server/
-#COPY .gitignore /srv/shiny-server/
-#COPY .Rapp.history /srv/shiny-server/
-#COPY LICENSE /srv/shiny-server/
-#COPY README.md /srv/shiny-server/
 COPY ui.R /srv/shiny-server/
 COPY server.R /srv/shiny-server/
 COPY R /srv/shiny-server/R
